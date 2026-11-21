@@ -1,0 +1,71 @@
+<div class="layout">
+
+  <!-- Capa oscura detrás del menú en celular: al tocarla se cierra el menú -->
+  <div class="fondo-menu" [class.abierto]="menu_abierto" (click)="cerrar_menu()"></div>
+
+  <!-- ====== Sidebar ====== -->
+  <!-- (click)="cerrar_menu()" en el nav: al elegir una pantalla en celular, el menú se cierra solo -->
+  <aside class="sidebar" [class.abierto]="menu_abierto">
+    <div class="marca">
+      <div class="logo"><i class="fa-solid fa-futbol" aria-hidden="true"></i></div>
+      <div>
+        <div class="equipo">{{ equipo }}</div>
+        <div class="temporada">Temporada {{ temporada }}</div>
+      </div>
+    </div>
+
+    <nav (click)="cerrar_menu()">
+      <!-- PANEL -->
+      <div class="seccion-menu">Panel</div>
+      <a routerLink="/" routerLinkActive="active-nav" [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+        Dashboard
+      </a>
+
+      <!-- PLANTILLA Y CARGA -->
+      <div class="seccion-menu">Plantilla y carga</div>
+      <a routerLink="/plantilla" routerLinkActive="active-nav">
+        <i class="fa-solid fa-users" aria-hidden="true"></i>
+        Plantilla &amp; Fatiga
+      </a>
+      <a routerLink="/registro" routerLinkActive="active-nav">
+        <i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>
+        Registro de carga
+      </a>
+      <a routerLink="/lesiones" routerLinkActive="active-nav">
+        <i class="fa-solid fa-briefcase-medical" aria-hidden="true"></i>
+        Lesiones
+      </a>
+
+      <!-- TÁCTICA -->
+      <div class="seccion-menu">Táctica</div>
+      <a routerLink="/pizarra" routerLinkActive="active-nav">
+        <i class="fa-solid fa-chess-board" aria-hidden="true"></i>
+        Pizarra Táctica
+      </a>
+
+      <!-- COMPETICIÓN -->
+      <div class="seccion-menu">Competición</div>
+      <a routerLink="/temporada" routerLinkActive="active-nav">
+        <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+        Temporada
+      </a>
+    </nav>
+
+    <div class="pie">Prevención de lesiones · ACWR</div>
+  </aside>
+
+  <!-- ====== Contenido ====== -->
+  <main class="contenido">
+
+    <!-- Barra con el botón ☰: solo aparece en celular / tablet (ver styles.css) -->
+    <div class="barra-movil">
+      <button type="button" class="boton-menu" (click)="alternar_menu()" aria-label="Abrir menú">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
+      <span>{{ equipo }}</span>
+    </div>
+
+    <router-outlet></router-outlet>
+  </main>
+</div>

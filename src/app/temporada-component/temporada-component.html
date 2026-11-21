@@ -1,0 +1,126 @@
+<header class="barra-superior">
+  <h1 class="titulo-pagina">Gestión de Temporada</h1>
+  <button class="btn btn-outline-primary btn-sm" (click)="actualizar()" [disabled]="cargando()">
+    <i class="fa-solid fa-rotate" aria-hidden="true"></i> Actualizar desde la API
+  </button>
+</header>
+
+<!-- Pestañas: una por cada competición que juega el equipo esta temporada (salen de la API) -->
+<ul class="nav nav-tabs pestanas">
+  @for (competicion of competiciones(); track competicion.id) {
+    <li class="nav-item">
+      <a class="nav-link" href="javascript:void(0)"
+         [class.active]="competicion.id == id_competicion_elegida()"
+         (click)="elegir_competicion(competicion.id)">{{ competicion.nombre }}</a>
+    </li>
+  }
+</ul>
+
+<div class="pagina">
+
+  @if (mensaje_error() != '') {
+    <div class="alert alert-danger">
+      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      <b>No se pudieron traer los datos de la API.</b> {{ mensaje_error() }}
+    </div>
+  }
+
+  <div class="row">
+
+    <!-- Clasificación -->
+    <div class="col-lg-8 mb-3">
+      <div class="tarjeta">
+        <h2 class="titulo-tarjeta">Clasificación</h2>
+        <div class="table-responsive">
+          <table class="table table-sm tabla-datos mb-0 text-center">
+            <thead>
+              <tr>
+                <th class="text-left">#</th><th class="text-left">Equipo</th>
+                <th title="Partidos jugados">PJ</th><th title="Ganados">PG</th><th title="Empatados">PE</th><th title="Perdidos">PP</th>
+                <th title="Goles a favor">GF</th><th title="Goles en contra">GC</th><th title="Diferencia de goles">DG</th><th title="Puntos">Pts</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Una fila por equipo; la nuestra se resalta con la clase fila-propia -->
+              @for (fila of clasificacion(); track fila.equipo) {
+                <tr [class.fila-propia]="fila.es_nuestro">
+                  <td class="text-left">{{ fila.posicion }}</td>
+                  <td class="text-left">{{ fila.equipo }}</td>
+                  <td>{{ fila.jugados }}</td>
+                  <td>{{ fila.ganados }}</td>
+                  <td>{{ fila.empatados }}</td>
+                  <td>{{ fila.perdidos }}</td>
+                  <td>{{ fila.goles_favor }}</td>
+                  <td>{{ fila.goles_contra }}</td>
+                  <td>{{ fila.diferencia > 0 ? '+' : '' }}{{ fila.diferencia }}</td>
+                  <td class="font-weight-bold">{{ fila.puntos }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="10" class="text-muted py-3">
+                    {{ cargando() ? 'Trayendo la tabla…' : 'Esta competición no tiene tabla de posiciones.' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="nota mb-0 mt-2">
+          <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Datos obtenidos de la API de fútbol.
+        </p>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+
+      <!-- Próximos partidos -->
+      <div class="tarjeta mb-3">
+        <h2 class="titulo-tarjeta">Próximos partidos</h2>
+        @for (partido of proximos(); track partido.id) {
+          <div class="item-partido">
+            <div class="d-flex flex-wrap justify-content-between align-items-center" style="gap:4px 8px">
+              <span class="badge-estado badge-gris">{{ partido.competicion }}</span>
+              <span class="text-muted" style="font-size:12px">{{ partido.fecha | date:'EEE d MMM · HH:mm' }}</span>
+            </div>
+            <div class="mt-1 font-weight-bold">
+              vs {{ partido.somos_local ? partido.visitante : partido.local }}
+              @if (partido.somos_local) {
+                <span class="badge-estado badge-verde ml-1">Local</span>
+              } @else {
+                <span class="badge-estado badge-gris ml-1">Visitante</span>
+              }
+            </div>
+          </div>
+        } @empty {
+          <p class="text-muted mb-0">No hay partidos programados.</p>
+        }
+      </div>
+
+      <!-- Últimos resultados -->
+      <div class="tarjeta mb-3">
+        <h2 class="titulo-tarjeta">Últimos resultados</h2>
+        @for (partido of resultados(); track partido.id) {
+          <div class="item-partido d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted" style="font-size:12px">{{ partido.competicion }} · {{ partido.fecha | date:'d MMM' }}</div>
+              <div class="font-weight-bold">
+                {{ partido.local }} {{ partido.goles_local }} - {{ partido.goles_visitante }} {{ partido.visitante }}
+              </div>
+            </div>
+            <!-- G = ganado, E = empatado, P = perdido -->
+            @if (resultado_de(partido) == 'G') {
+              <span class="badge-estado badge-verde" title="Ganado">G</span>
+            } @else if (resultado_de(partido) == 'E') {
+              <span class="badge-estado badge-amarillo" title="Empatado">E</span>
+            } @else {
+              <span class="badge-estado badge-rojo" title="Perdido">P</span>
+            }
+          </div>
+        } @empty {
+          <p class="text-muted mb-0">Todavía no hay partidos jugados.</p>
+        }
+      </div>
+
+    </div>
+  </div>
+</div>

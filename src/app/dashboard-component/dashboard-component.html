@@ -1,0 +1,133 @@
+<header class="barra-superior">
+  <h1 class="titulo-pagina">Dashboard de Temporada</h1>
+  @if (proximo_partido(); as proximo) {
+    <div class="subtitulo-pagina">
+      Próximo partido: <b class="text-dark">{{ proximo.local }} vs {{ proximo.visitante }}</b> · {{ proximo.fecha | date:'EEE d MMM' }}
+    </div>
+  }
+</header>
+
+<div class="pagina">
+
+  @if (mensaje_error() != '') {
+    <div class="alert alert-danger">
+      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      <b>No se pudieron traer los datos de la API.</b> {{ mensaje_error() }}
+    </div>
+  }
+
+  <!-- KPIs: 2 por fila en celular (col-6), 4 por fila en escritorio (col-lg-3) -->
+  <!-- Los tres primeros salen de nuestra fila en la tabla de la liga (API).
+       "?." evita un error mientras la fila todavía no llegó; "?? '–'" muestra un guion en su lugar. -->
+  <div class="row">
+    <div class="col-6 col-lg-3 mb-3">
+      <div class="tarjeta kpi h-100">
+        <div class="kpi-titulo"><i class="fa-solid fa-ranking-star" aria-hidden="true"></i> Posición en La Liga</div>
+        <div class="kpi-valor">{{ nuestra_fila()?.posicion ?? '–' }}º</div>
+        <div class="kpi-detalle text-success">{{ nuestra_fila()?.puntos ?? '–' }} pts</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3 mb-3">
+      <div class="tarjeta kpi h-100">
+        <div class="kpi-titulo"><i class="fa-solid fa-futbol" aria-hidden="true"></i> Partidos jugados</div>
+        <div class="kpi-valor">{{ nuestra_fila()?.jugados ?? '–' }}</div>
+        <div class="kpi-detalle">
+          {{ nuestra_fila()?.ganados ?? '–' }} G · {{ nuestra_fila()?.empatados ?? '–' }} E · {{ nuestra_fila()?.perdidos ?? '–' }} P
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3 mb-3">
+      <div class="tarjeta kpi h-100">
+        <div class="kpi-titulo"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> Diferencia de goles</div>
+        <div class="kpi-valor">
+          @if (nuestra_fila(); as fila) {
+            {{ fila.diferencia > 0 ? '+' : '' }}{{ fila.diferencia }}
+          } @else {
+            –
+          }
+        </div>
+        <div class="kpi-detalle">
+          {{ nuestra_fila()?.goles_favor ?? '–' }} a favor · {{ nuestra_fila()?.goles_contra ?? '–' }} en contra
+        </div>
+      </div>
+    </div>
+    <!-- Este KPI todavía es un dato fijo: saldrá del cálculo de ACWR -->
+    <div class="col-6 col-lg-3 mb-3">
+      <div class="tarjeta kpi h-100">
+        <div class="kpi-titulo"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Disponibles hoy</div>
+        <div class="kpi-valor">–</div>
+        <div class="kpi-detalle">Sin datos todavía</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Disponibilidad: es lo más importante, por eso en celular va primero (order-lg-2 la pasa a la derecha en escritorio) -->
+    <!-- Todavía con datos fijos: saldrá de las lesiones y del cálculo de ACWR -->
+    <div class="col-lg-5 order-lg-2 mb-3">
+      <div class="tarjeta h-100">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="titulo-tarjeta mb-0">Disponibilidad del plantel</h2>
+          <a routerLink="/plantilla" class="enlace">Ver plantilla</a>
+        </div>
+
+        <div class="aviso">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          Sin datos todavía. Este panel mostrará quién no está disponible y quién está en riesgo
+          cuando haya lesiones registradas y sesiones para calcular el ACWR.
+        </div>
+      </div>
+    </div>
+
+    <!-- Clasificación: los 5 primeros de la liga (API) -->
+    <div class="col-lg-7 order-lg-1 mb-3">
+      <div class="tarjeta h-100">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="titulo-tarjeta mb-0">Clasificación · La Liga</h2>
+          <a routerLink="/temporada" class="enlace">Ver tabla completa</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm tabla-datos mb-0">
+            <thead>
+              <tr>
+                <th>#</th><th>Equipo</th>
+                <th class="text-center" title="Partidos jugados">PJ</th>
+                <th class="text-center" title="Diferencia de goles">DG</th>
+                <th class="text-center" title="Puntos">Pts</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of primeros(); track fila.equipo) {
+                <tr [class.fila-propia]="fila.es_nuestro">
+                  <td>{{ fila.posicion }}</td>
+                  <td>{{ fila.equipo }}</td>
+                  <td class="text-center">{{ fila.jugados }}</td>
+                  <td class="text-center">{{ fila.diferencia > 0 ? '+' : '' }}{{ fila.diferencia }}</td>
+                  <td class="text-center">{{ fila.puntos }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="5" class="text-center text-muted py-3">Trayendo la tabla…</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Próximo partido (API): en celular los datos se apilan (flex-column), en escritorio van en una fila (flex-md-row) -->
+  @if (proximo_partido(); as proximo) {
+    <div class="tarjeta tarjeta-oscura d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+      <div>
+        <div style="font-size:12px;color:#94a3b8">
+          <i class="fa-solid fa-calendar-day" aria-hidden="true"></i> Próximo partido · {{ proximo.competicion }} · {{ proximo.jornada }}
+        </div>
+        <div style="font-size:18px;font-weight:800">{{ proximo.local }} <span style="color:#64748b">vs</span> {{ proximo.visitante }}</div>
+        <div style="font-size:13px;color:#cbd5e1">
+          {{ proximo.fecha | date:"EEEE d 'de' MMMM · HH:mm" }} · {{ proximo.somos_local ? 'Local' : 'Visitante' }}
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

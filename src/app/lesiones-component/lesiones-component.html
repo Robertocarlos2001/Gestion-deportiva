@@ -1,0 +1,100 @@
+<header class="barra-superior">
+  <h1 class="titulo-pagina">Historial de Lesiones</h1>
+  <!-- Resumen rápido del estado actual -->
+  <div class="leyenda">
+    <span class="badge-estado badge-gris">Sin lesiones registradas</span>
+  </div>
+</header>
+
+<div class="pagina">
+  <div class="row">
+
+    <!-- Formulario -->
+    <div class="col-lg-4 mb-3">
+      <div class="tarjeta">
+        <h2 class="titulo-tarjeta">Registrar lesión</h2>
+
+        <div class="form-group">
+          <label for="les_jugador" class="etiqueta">Jugador</label>
+          <select id="les_jugador" class="form-control">
+            <option selected disabled>Elegí un jugador…</option>
+            <!-- La lista sale de la plantilla actual (API) -->
+            @for (jugador of jugadores(); track jugador.id_api) {
+              <option>{{ jugador.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label for="les_tipo" class="etiqueta">Tipo</label>
+            <select id="les_tipo" class="form-control">
+              <option>Muscular</option>
+              <option>Ligamentosa</option>
+              <option>Ósea</option>
+              <option>Tendinosa</option>
+            </select>
+          </div>
+          <div class="form-group col-6">
+            <label for="les_contexto" class="etiqueta">Contexto</label>
+            <select id="les_contexto" class="form-control">
+              <option>Entrenamiento</option>
+              <option>Partido</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-7">
+            <label for="les_zona" class="etiqueta">Zona corporal</label>
+            <input id="les_zona" type="text" class="form-control" placeholder="Rodilla, isquios...">
+          </div>
+          <div class="form-group col-5">
+            <label for="les_lado" class="etiqueta">Lado</label>
+            <select id="les_lado" class="form-control">
+              <option>Izquierdo</option>
+              <option>Derecho</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-7">
+            <label for="les_fecha" class="etiqueta">Fecha</label>
+            <input id="les_fecha" type="date" class="form-control">
+          </div>
+          <div class="form-group col-5">
+            <label for="les_dias" class="etiqueta">Días de baja</label>
+            <input id="les_dias" type="number" min="0" class="form-control" placeholder="0">
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Guardar lesión</button>
+      </div>
+    </div>
+
+    <!-- Historial -->
+    <div class="col-lg-8 mb-3">
+      <div class="tarjeta">
+        <h2 class="titulo-tarjeta">Lesiones registradas</h2>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover tabla-datos mb-0">
+            <thead>
+              <tr>
+                <th>Jugador</th><th>Tipo</th><th>Zona</th><th>Lado</th><th>Fecha</th><th class="text-center">Días de baja</th><th>Contexto</th><th class="text-center">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Todavía no hay dónde guardar lesiones: la tabla empieza vacía -->
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">
+                  Todavía no hay lesiones registradas.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

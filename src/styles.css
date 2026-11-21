@@ -1,0 +1,414 @@
+/* ====== Estilos globales · Gestión Deportiva ====== */
+/* Bootstrap 4.6 se carga desde angular.json ANTES que este archivo,
+   así nuestros estilos propios ganan cuando hay conflicto. */
+
+:root {
+  --acento: #4f46e5;
+  --acento-suave: #eef2ff;
+  --fondo: #d9dfe8;
+  --sidebar: #11151e;
+  --borde: #cdd5e0;
+  --texto: #0f172a;
+  --texto-suave: #64748b;
+  --texto-tenue: #94a3b8;
+  --verde: #16a34a;
+  --amarillo: #d97706;
+  --rojo: #dc2626;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  font-size: 14px;
+}
+
+/* ====== Layout con sidebar ====== */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
+  width: 232px;
+  flex: none;
+  background: var(--sidebar);
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  /* En escritorio queda fijo mientras se desplaza el contenido */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar .marca {
+  padding: 20px 22px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #1f2733;
+}
+.sidebar .marca .logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: var(--acento);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #fff;
+  flex: none;
+}
+.sidebar .marca .equipo { color: #fff; font-weight: 700; font-size: 14px; }
+.sidebar .marca .temporada { font-size: 11px; color: var(--texto-suave); }
+
+.sidebar nav {
+  padding: 8px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+/* Título de cada grupo del menú (Panel, Plantilla y carga, ...) */
+.sidebar .seccion-menu {
+  padding: 14px 12px 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--texto-suave);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 12px;
+  border-radius: 9px;
+  color: var(--texto-tenue);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+/* Iconos de Font Awesome: ancho fijo para que los textos queden alineados */
+.sidebar nav a i { flex: none; width: 18px; text-align: center; font-size: 15px; }
+.sidebar nav a:hover {
+  color: #e2e8f0;
+  background: #161d28;
+}
+.sidebar nav a.active-nav {
+  background: #1b2431;
+  color: #fff;
+  font-weight: 600;
+  border-left: 3px solid var(--acento);
+}
+.sidebar .pie {
+  margin-top: auto;
+  padding: 16px 18px;
+  border-top: 1px solid #1f2733;
+  font-size: 11px;
+  color: var(--texto-suave);
+}
+
+.contenido {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Barra con el botón de menú: solo se ve en celular / tablet */
+.barra-movil {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  background: var(--sidebar);
+  color: #fff;
+  padding: 10px 14px;
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  font-weight: 700;
+}
+.boton-menu {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 9px;
+  background: #1b2431;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Capa oscura detrás del menú abierto (al tocarla, se cierra) */
+.fondo-menu {
+  display: none;
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: rgba(15, 23, 42, .55);
+  z-index: 1030;
+}
+
+/* Barra superior de cada pantalla: título + acciones */
+.barra-superior {
+  min-height: 60px;
+  background: #fff;
+  border-bottom: 1px solid var(--borde);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 28px;
+}
+.titulo-pagina { margin: 0; font-size: 18px; font-weight: 700; }
+.subtitulo-pagina { font-size: 12.5px; color: var(--texto-suave); }
+
+.pagina {
+  padding: 22px 24px;
+  width: 100%;
+  max-width: 1400px;
+}
+
+/* ====== Celular y tablet (menos de 992px) ====== */
+@media (max-width: 991.98px) {
+  .barra-movil { display: flex; }
+
+  /* El sidebar se esconde a la izquierda y entra deslizándose */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform .2s ease;
+  }
+  .sidebar.abierto { transform: translateX(0); }
+  .fondo-menu.abierto { display: block; }
+
+  .barra-superior { padding: 10px 16px; }
+  .pagina { padding: 16px 12px; }
+  .tarjeta { padding: 14px 14px; }
+}
+
+/* ====== Tarjetas ====== */
+.tarjeta {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.titulo-tarjeta { margin: 0 0 12px; font-size: 15px; font-weight: 700; }
+.tarjeta-oscura { background: var(--sidebar); color: #fff; border: none; }
+.enlace { color: var(--acento); font-weight: 600; font-size: 12.5px; }
+.nota { font-size: 12px; color: var(--texto-tenue); }
+.aviso {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+/* Tarjetas de indicadores (KPI) del dashboard */
+.kpi .kpi-titulo { font-size: 12.5px; color: var(--texto-suave); font-weight: 500; }
+.kpi .kpi-titulo i { color: var(--acento); margin-right: 4px; }
+.kpi .kpi-valor  { font-size: 28px; font-weight: 800; line-height: 1.2; margin-top: 4px; }
+.kpi .kpi-detalle { font-size: 12px; font-weight: 600; color: var(--texto-suave); }
+
+/* ====== Formularios ====== */
+.etiqueta {
+  font-size: 12px;
+  color: var(--texto-suave);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.btn-primary { background: var(--acento); border-color: var(--acento); }
+.btn-primary:hover, .btn-primary:focus { background: #4338ca; border-color: #4338ca; }
+.btn-outline-primary { color: var(--acento); border-color: var(--acento); }
+.btn-outline-primary:hover { background: var(--acento); border-color: var(--acento); }
+
+/* ====== Interruptor de dos opciones (Entrenamiento / Post-partido) ====== */
+.interruptor {
+  display: inline-flex;
+  background: #e2e8f0;
+  border-radius: 10px;
+  padding: 3px;
+}
+.interruptor button {
+  border: none;
+  background: transparent;
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.interruptor button.activo {
+  background: var(--acento);
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .25);
+}
+
+/* ====== Tablas de datos ====== */
+.tabla-datos { font-size: 13px; }
+.tabla-datos thead th {
+  color: var(--texto-tenue);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  border-top: none;
+  white-space: nowrap;
+}
+.tabla-datos td { vertical-align: middle; }
+.tabla-datos tbody tr { background: #fff; }
+.tabla-datos.table-hover tbody tr:hover { background: #f8fafc; }
+.tabla-datos tbody tr.fila-propia { background: var(--acento-suave); font-weight: 700; }
+
+/* La primera columna (el jugador) queda fija al deslizar la tabla de lado */
+.tabla-datos th:first-child,
+.tabla-datos td:first-child {
+  position: sticky;
+  left: 0;
+  background: inherit;
+  z-index: 1;
+}
+.tabla-datos thead tr { background: #fff; }
+
+/* Planillas con campos para escribir: ancho mínimo para que no se aplasten */
+.planilla { min-width: 560px; }
+.planilla input[type="checkbox"] { width: 18px; height: 18px; }
+
+/* ====== Semáforo de fatiga (ACWR) ====== */
+.badge-verde   { background: #dcfce7; color: #15803d; }
+.badge-amarillo{ background: #fef3c7; color: #b45309; }
+.badge-rojo    { background: #fee2e2; color: #b91c1c; }
+.badge-gris    { background: #e2e8f0; color: #475569; }
+.badge-estado  {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.tabla-datos tbody tr.fila-verde,
+.fila-verde    { background: #f0fdf4; border-left: 3px solid var(--verde); }
+.tabla-datos tbody tr.fila-amarillo,
+.fila-amarillo { background: #fffbeb; border-left: 3px solid var(--amarillo); }
+.tabla-datos tbody tr.fila-rojo,
+.fila-rojo     { background: #fef2f2; border-left: 3px solid var(--rojo); }
+/* Gris: jugador fuera del seguimiento (por ejemplo, cedido a otro club) */
+.fila-gris     { background: #f1f5f9; border-left: 3px solid #94a3b8; }
+
+/* Leyenda del semáforo: explica qué significa cada color */
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+/* Fila de una lista de estado (ej. "Gavi — Lesión · rodilla") */
+.item-estado {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 10px;
+  padding: 7px 10px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* Un partido dentro de una lista (próximos partidos, últimos resultados) */
+.item-partido {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  font-size: 13.5px;
+}
+.item-partido:last-child { margin-bottom: 0; }
+
+/* Barra que reparte el plantel en verde / amarillo / rojo */
+.barra-reparto {
+  display: flex;
+  height: 10px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #e2e8f0;
+}
+.barra-reparto .tramo-verde    { background: var(--verde); }
+.barra-reparto .tramo-amarillo { background: var(--amarillo); }
+.barra-reparto .tramo-rojo     { background: var(--rojo); }
+
+.anillo-acwr {
+  width: 104px; height: 104px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; flex: none;
+  border: 9px solid var(--verde);
+}
+.anillo-acwr.rojo { border-color: var(--rojo); }
+.anillo-acwr.amarillo { border-color: var(--amarillo); }
+.anillo-acwr .valor { font-size: 26px; font-weight: 800; line-height: 1; }
+
+/* ====== Pestañas (competencias) ====== */
+/* En celular se deslizan de lado en vez de apilarse */
+.pestanas {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  background: #fff;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--borde);
+}
+.pestanas .nav-link { color: var(--texto-suave); font-size: 13.5px; }
+.pestanas .nav-link.active { color: var(--acento); font-weight: 700; border-bottom: 2px solid var(--acento); }
+
+/* ====== Cancha táctica ====== */
+.cancha {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 760px;
+  margin: 0 auto;
+  background: repeating-linear-gradient(#2f8f54 0 48px, #2b854d 48px 96px);
+  border: 3px solid rgba(255,255,255,.8);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+.linea-media { position:absolute; top:50%; left:0; right:0; height:3px; background:rgba(255,255,255,.75); }
+.circulo-central { position:absolute; top:50%; left:50%; width:120px; height:120px; border:3px solid rgba(255,255,255,.75); border-radius:50%; transform:translate(-50%,-50%); }
+.area { position:absolute; left:50%; width:180px; height:92px; border:3px solid rgba(255,255,255,.7); transform:translateX(-50%); }
+.area.arriba { top:0; border-top:none; }
+.area.abajo  { bottom:0; border-bottom:none; }
+
+.ficha {
+  position: absolute;
+  transform: translate(-50%,-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  width: 72px;
+  cursor: grab;
+}
+.ficha .dorsal {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--verde);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+.ficha .dorsal.amarillo { border-color: var(--amarillo); }
+.ficha .dorsal.rojo { border-color: var(--rojo); box-shadow: 0 2px 8px rgba(220,38,38,.5); }
+.ficha .nombre {
+  font-size: 10px; color: #fff; font-weight: 600;
+  background: rgba(0,0,0,.4); padding: 1px 6px; border-radius: 5px; white-space: nowrap;
+}

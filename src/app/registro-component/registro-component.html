@@ -1,0 +1,20 @@
+<header class="barra-superior">
+  <h1 class="titulo-pagina">Registro de carga</h1>
+
+  <!-- Interruptor: el botón del modo activo se pinta con la clase "activo" -->
+  <div class="interruptor" role="group" aria-label="Tipo de registro">
+    <button type="button" [class.activo]="modo == 'entrenamiento'" (click)="cambiar_modo('entrenamiento')">
+      <i class="fa-solid fa-dumbbell" aria-hidden="true"></i> Entrenamiento
+    </button>
+    <button type="button" [class.activo]="modo == 'partido'" (click)="cambiar_modo('partido')">
+      <i class="fa-solid fa-futbol" aria-hidden="true"></i> Post-partido
+    </button>
+  </div>
+</header>
+
+<!-- Según el modo se muestra un componente u otro -->
+@if (modo == 'entrenamiento') {
+  <app-registro-entrenamiento-component></app-registro-entrenamiento-component>
+} @else {
+  <app-registro-partido-component></app-registro-partido-component>
+}

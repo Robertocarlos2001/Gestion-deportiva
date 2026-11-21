@@ -1,0 +1,109 @@
+<header class="barra-superior">
+  <h1 class="titulo-pagina">Plantilla &amp; Control de Fatiga</h1>
+  <button class="btn btn-outline-primary btn-sm" (click)="actualizar()" [disabled]="cargando()">
+    <i class="fa-solid fa-rotate" aria-hidden="true"></i> Actualizar desde la API
+  </button>
+</header>
+
+<div class="pagina">
+
+  @if (mensaje_error() != '') {
+    <div class="alert alert-danger">
+      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      <b>No se pudieron traer los datos de la API.</b> {{ mensaje_error() }}
+    </div>
+  }
+
+  <div class="row">
+
+    <!-- Tabla de jugadores -->
+    <div class="col-lg-8 mb-3">
+      <div class="tarjeta">
+        <h2 class="titulo-tarjeta">Jugadores · {{ jugadores().length }}</h2>
+
+        <!-- Leyenda: qué significa cada color del semáforo -->
+        <div class="leyenda mb-3">
+          <span class="badge-estado badge-verde">Óptimo · 0.80 a 1.30</span>
+          <span class="badge-estado badge-amarillo">Precaución · 1.31 a 1.49 o menos de 0.80</span>
+          <span class="badge-estado badge-rojo">Riesgo · 1.50 o más</span>
+          <span class="badge-estado badge-gris">Sin datos · faltan sesiones</span>
+        </div>
+
+        <!-- En celular se oculta la columna de convocatorias (d-none d-sm-table-cell) -->
+        <div class="table-responsive">
+          <table class="table table-sm table-hover tabla-datos mb-0">
+            <thead>
+              <tr>
+                <th>Jugador</th>
+                <th class="text-center" title="Dorsal">Nº</th>
+                <th>Pos</th>
+                <th class="text-center d-none d-sm-table-cell" title="Convocatorias en los últimos 3 partidos">Conv.</th>
+                <th class="text-center" title="Minutos jugados en los últimos 3 partidos">Min.</th>
+                <th class="text-center" title="Carga aguda ÷ carga crónica">ACWR</th>
+                <th class="text-center">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Una fila por jugador de la plantilla (API) -->
+              @for (jugador of jugadores(); track jugador.id_api) {
+                <tr>
+                  <td class="font-weight-bold">{{ jugador.nombre }}</td>
+                  <td class="text-center text-muted">{{ jugador.dorsal }}</td>
+                  <td class="text-muted">{{ jugador.posicion }}</td>
+                  <td class="text-center d-none d-sm-table-cell">{{ jugador.convocatorias }}</td>
+                  <td class="text-center">{{ jugador.minutos_recientes }}</td>
+                  <!-- ACWR y estado: todavía no hay sesiones guardadas para calcularlos -->
+                  <td class="text-center text-muted">–</td>
+                  <td class="text-center"><span class="badge-estado badge-gris">Sin datos</span></td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-3">
+                    {{ cargando() ? 'Trayendo la plantilla…' : 'No hay jugadores para mostrar.' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="nota mb-0 mt-3">
+          <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i>
+          La lista se arma con los convocados de los últimos 3 partidos (API de fútbol),
+          por eso no aparecen los jugadores cedidos a otros clubes.
+        </p>
+      </div>
+    </div>
+
+    <!-- Panel derecho -->
+    <div class="col-lg-4">
+
+      <!-- Cómo se calcula la fatiga -->
+      <div class="tarjeta mb-3">
+        <h2 class="titulo-tarjeta">Control de fatiga (ACWR)</h2>
+        <div class="aviso mb-3">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          Todavía no hay sesiones guardadas, por eso todos los jugadores aparecen «Sin datos».
+        </div>
+        <div class="d-flex justify-content-between"><span class="text-muted">Carga diaria</span><b>minutos × RPE</b></div>
+        <div class="d-flex justify-content-between mt-2"><span class="text-muted">Carga aguda</span><b>últimos 7 días</b></div>
+        <div class="d-flex justify-content-between mt-2"><span class="text-muted">Carga crónica</span><b>últimos 28 días ÷ 4</b></div>
+        <div class="d-flex justify-content-between mt-2"><span class="text-muted">ACWR</span><b>aguda ÷ crónica</b></div>
+        <a routerLink="/registro" class="btn btn-primary btn-block mt-3">
+          <i class="fa-solid fa-clipboard-list" aria-hidden="true"></i> Ir a Registro de carga
+        </a>
+      </div>
+
+      <!-- Cedidos: pertenecen al club pero están prestados a otro equipo.
+           No entrenan aquí, así que no tienen cargas ni semáforo de fatiga. -->
+      <div class="tarjeta mb-3">
+        <h2 class="titulo-tarjeta">
+          <i class="fa-solid fa-right-left" aria-hidden="true"></i> Cedidos a otros clubes
+        </h2>
+        <p class="text-muted mb-0">
+          Todavía no hay jugadores marcados como cedidos. La API no informa las cesiones:
+          se registrarán a mano.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

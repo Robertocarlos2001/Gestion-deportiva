@@ -1,0 +1,111 @@
+<div class="pagina">
+
+  <!-- Aviso: todavía no hay clave, lo que se ve son datos inventados -->
+  @if (partido()?.es_ejemplo) {
+    <div class="alert alert-warning">
+      <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      <b>Datos de ejemplo.</b> Para traer los datos reales, pega tu clave de la API de fútbol en
+      <code>src/environments/environment.ts</code> (campo <code>clave</code>).
+    </div>
+  }
+
+  <!-- Aviso: la API respondió con un error -->
+  @if (mensaje_error() != '') {
+    <div class="alert alert-danger">
+      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      <b>No se pudieron traer los datos de la API.</b> {{ mensaje_error() }}
+    </div>
+  }
+
+  <!-- "partido()" lee el signal; "as p" le pone un nombre corto para usarlo abajo -->
+  @if (partido(); as p) {
+
+    <!-- Partido -->
+    <div class="tarjeta tarjeta-oscura mb-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+      <div>
+        <div style="font-size:12px;color:#94a3b8">{{ p.competicion }} · {{ p.jornada }} · {{ p.fecha | date:'d MMM y' }}</div>
+        <div style="font-size:18px;font-weight:800">
+          {{ p.local }} <span style="color:#4ade80">{{ p.goles_local }}</span> - <span style="color:#4ade80">{{ p.goles_visitante }}</span> {{ p.visitante }}
+        </div>
+      </div>
+      <div class="mt-2 mt-md-0" style="font-size:13px;color:#cbd5e1">
+        <i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i>
+        {{ p.es_ejemplo ? 'Datos de ejemplo' : 'Datos obtenidos de la API de fútbol' }}
+      </div>
+    </div>
+
+    <!-- Planilla de jugadores (solo lectura) -->
+    <div class="tarjeta">
+      <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:8px">
+        <h2 class="titulo-tarjeta mb-0">Planilla del partido</h2>
+        <button class="btn btn-outline-primary btn-sm" (click)="actualizar_partido()" [disabled]="cargando()">
+          <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+          {{ cargando() ? 'Actualizando…' : 'Actualizar desde la API' }}
+        </button>
+      </div>
+
+      <!-- En celular la tabla se desliza de lado y el nombre del jugador queda fijo -->
+      <div class="table-responsive">
+        <table class="table table-sm table-hover tabla-datos mb-0">
+          <thead>
+            <tr>
+              <th>Jugador</th>
+              <th class="text-center">Minutos</th>
+              <th class="text-center">Amarillas</th>
+              <th class="text-center">Roja</th>
+              <th class="text-center">Goles</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Una fila por cada jugador que llegó de la API -->
+            @for (jugador of p.jugadores; track jugador.nombre) {
+              <tr>
+                <td class="font-weight-bold">{{ jugador.nombre }}</td>
+                <td class="text-center">{{ jugador.minutos }}</td>
+                <td class="text-center">
+                  @if (jugador.amarillas > 0) {
+                    <span class="badge-estado badge-amarillo">{{ jugador.amarillas }}</span>
+                  } @else {
+                    <span class="text-muted">0</span>
+                  }
+                </td>
+                <td class="text-center">
+                  @if (jugador.roja) {
+                    <span class="badge-estado badge-rojo">Sí</span>
+                  } @else {
+                    <span class="text-muted">No</span>
+                  }
+                </td>
+                <td class="text-center">
+                  @if (jugador.goles > 0) {
+                    <b><i class="fa-solid fa-futbol" aria-hidden="true"></i> {{ jugador.goles }}</b>
+                  } @else {
+                    <span class="text-muted">0</span>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="text-center text-muted py-3">La API todavía no tiene la planilla de este partido.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="nota mb-0 mt-3">
+        Estos datos llegan de la API y no se editan aquí. Las tarjetas suman a la disciplina del jugador.
+      </p>
+    </div>
+
+  } @else if (cargando()) {
+    <div class="tarjeta text-center text-muted py-4">
+      <i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Trayendo el último partido…
+    </div>
+  } @else {
+    <!-- Hubo un error y no hay nada que mostrar: se ofrece reintentar -->
+    <div class="tarjeta text-center py-4">
+      <button class="btn btn-primary" (click)="cargar_partido()">
+        <i class="fa-solid fa-rotate" aria-hidden="true"></i> Reintentar
+      </button>
+    </div>
+  }
+
+</div>

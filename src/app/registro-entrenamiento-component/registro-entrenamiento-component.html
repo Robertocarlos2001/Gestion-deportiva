@@ -1,0 +1,126 @@
+<div class="pagina">
+
+  <!-- Datos generales de la sesión -->
+  <div class="tarjeta mb-3">
+    <div class="form-row align-items-end">
+      <div class="form-group col-6 col-md-3 mb-2 mb-md-0">
+        <label for="fecha_sesion" class="etiqueta">Fecha</label>
+        <input id="fecha_sesion" type="date" class="form-control">
+      </div>
+      <div class="form-group col-6 col-md-3 mb-2 mb-md-0">
+        <label for="duracion_estandar" class="etiqueta">Duración (min)</label>
+        <input id="duracion_estandar" type="number" min="0" class="form-control" name="duracion_estandar" [(ngModel)]="duracion_estandar">
+      </div>
+      <div class="form-group col-md-6 mb-0">
+        <div class="aviso">
+          La duración se aplica a <b>todo el plantel</b>. Solo cambiás los minutos de quien tuvo una molestia.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Planilla por jugador -->
+  <div class="tarjeta">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3" style="gap:8px">
+      <h2 class="titulo-tarjeta mb-0">Carga por jugador</h2>
+      <button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#historialModal">
+        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Ver historial
+      </button>
+    </div>
+
+    <!-- Guía rápida de la escala RPE (esfuerzo percibido) -->
+    <div class="leyenda mb-3">
+      <span>RPE:</span>
+      <span class="badge-estado badge-verde">1–3 suave</span>
+      <span class="badge-estado badge-gris">4–6 moderado</span>
+      <span class="badge-estado badge-amarillo">7–8 duro</span>
+      <span class="badge-estado badge-rojo">9–10 máximo</span>
+    </div>
+
+    <!-- En celular la tabla se desliza de lado y el nombre del jugador queda fijo -->
+    <div class="table-responsive">
+      <table class="table table-sm tabla-datos planilla mb-0">
+        <thead>
+          <tr>
+            <th>Jugador</th>
+            <th class="text-center" style="width:100px">RPE (1–10)</th>
+            <th class="text-center" style="width:130px">Minutos reales</th>
+            <th style="min-width:220px">Molestia / Observación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Una fila por jugador de la plantilla actual (API). Los minutos arrancan en la duración estándar. -->
+          @for (jugador of jugadores(); track jugador.id_api) {
+            <tr>
+              <td class="font-weight-bold">{{ jugador.nombre }} <span class="text-muted font-weight-normal">· {{ jugador.posicion }}</span></td>
+              <td><input type="number" min="1" max="10" class="form-control form-control-sm text-center" aria-label="RPE" placeholder="1–10"></td>
+              <td><input type="number" min="0" class="form-control form-control-sm text-center" aria-label="Minutos reales" [value]="duracion_estandar"></td>
+              <td><input type="text" class="form-control form-control-sm" aria-label="Molestia u observación" placeholder="Sin molestias"></td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="text-center text-muted py-3">Trayendo la plantilla…</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="d-flex flex-wrap justify-content-between align-items-center mt-3" style="gap:10px">
+      <span class="nota">Jugadores de la plantilla actual, tomados de la API de fútbol.</span>
+      <button class="btn btn-primary"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Guardar entrenamiento</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Historial de entrenamientos ===== -->
+<div class="modal fade" id="historialModal" tabindex="-1" role="dialog" aria-labelledby="historialLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="historialLabel">Historial de entrenamientos</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Filtro por fecha -->
+        <div class="form-row align-items-end mb-3">
+          <div class="form-group col-6 col-sm-4 mb-2 mb-sm-0">
+            <label for="filtro_desde" class="etiqueta">Desde</label>
+            <input id="filtro_desde" type="date" class="form-control form-control-sm">
+          </div>
+          <div class="form-group col-6 col-sm-4 mb-2 mb-sm-0">
+            <label for="filtro_hasta" class="etiqueta">Hasta</label>
+            <input id="filtro_hasta" type="date" class="form-control form-control-sm">
+          </div>
+          <div class="form-group col-sm-4 mb-0">
+            <button class="btn btn-primary btn-sm btn-block"><i class="fa-solid fa-filter" aria-hidden="true"></i> Filtrar</button>
+          </div>
+        </div>
+
+        <!-- Tabla historial -->
+        <div class="table-responsive">
+          <table class="table table-sm table-hover tabla-datos mb-0">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th class="text-center">Duración</th>
+                <th class="text-center">Jugadores</th>
+                <th class="text-center">Con molestia</th>
+                <th class="text-center">Carga media</th>
+                <th class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">Todavía no hay entrenamientos guardados.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
